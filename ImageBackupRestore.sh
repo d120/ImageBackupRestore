@@ -40,6 +40,12 @@ do
         echo ""
         rm -rf $old_images
         dd if=$hdd bs=8M status=progress | gzip -c > $imagename
+        if [[ ${PIPESTATUS[0]} != 0 || ${PIPESTATUS[1]} != 0 ]]; then
+            echo ""
+            echo "ERROR: An error occured during creation of the backup."
+            echo "Aborting ..."
+            exit 1
+        fi
         echo ""
         echo "Please wait until all data is written..."
         sync
@@ -48,9 +54,28 @@ do
         ;;
     $choice2)
         # RESTORE
-
-        # gunzip -c FILENAME | dd of=$hdd bs=8M status=progress
-        echo "TODO: Implement restore here..."
+        image=$(ls -1r *$imagefile_suffix 2> /dev/null | head -n 1)
+        if [[ "$image" == "" ]]; then
+            echo "ERROR: Cannot find any $imagefile_suffix files in $imagefile_directory."
+            echo "Aborting ..."
+            exit 1
+        fi
+        echo "The image $image will be written to disk."
+        echo "WARNING: This will overwrite the entire hard disk!"
+        echo -n "Press any key to continue or Ctrl+C to abort:"
+        read -n 1
+        echo ""
+        gunzip -c $image | dd of=$hdd bs=8M status=progress
+        if [[ ${PIPESTATUS[0]} != 0 || ${PIPESTATUS[1]} != 0 ]]; then
+            echo ""
+            echo "ERROR: An error occured while restoring the image."
+            echo "Aborting ..."
+            exit 1
+        fi
+        echo ""
+        echo "Please wait until all data is written..."
+        sync
+        echo "Image successfully restored."
         break
         ;;
     *)
