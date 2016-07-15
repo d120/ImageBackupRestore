@@ -1,7 +1,7 @@
 #!/bin/bash
 
 hdd="/dev/sda"
-imagefile_directory=""
+imagefile_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )""/images"
 
 imagefile_prefix="dekanat_laptop_image"
 imagefile_suffix=".img.gz"
