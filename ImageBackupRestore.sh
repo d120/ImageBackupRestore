@@ -13,6 +13,12 @@ choice3="Abort: Do nothing."
 echo "=== Laptop Image: Backup & Restore ==="
 echo ""
 
+if [[ "$EUID" != 0 ]]; then
+    echo "ERROR: Script needs to be run with root privileges."
+    echo "Aborting ..."
+    exit 1
+fi
+
 cd $imagefile_directory 2> /dev/null
 if [[ $? != 0 ]]; then
     echo "ERROR: Cannot go to the directory where the images are: $imagefile_directory."
