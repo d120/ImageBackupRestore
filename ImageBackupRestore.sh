@@ -45,7 +45,7 @@ do
         read -n 1
         echo ""
         rm -rf $old_images
-        dd if=$hdd bs=8M status=progress | gzip -c > $imagename
+        dd if=$hdd bs=8M status=progress | pigz -p8 -c > $imagename
         if [[ ${PIPESTATUS[0]} != 0 || ${PIPESTATUS[1]} != 0 ]]; then
             echo ""
             echo "ERROR: An error occured during creation of the backup."
@@ -71,7 +71,7 @@ do
         echo -n "Press any key to continue or Ctrl+C to abort:"
         read -n 1
         echo ""
-        gunzip -c $image | dd of=$hdd bs=8M status=progress
+        unpigz -p8 -c $image | dd of=$hdd bs=8M status=progress
         if [[ ${PIPESTATUS[0]} != 0 || ${PIPESTATUS[1]} != 0 ]]; then
             echo ""
             echo "ERROR: An error occured while restoring the image."
